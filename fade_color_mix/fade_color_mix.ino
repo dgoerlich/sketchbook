@@ -2,6 +2,9 @@ const int redLedPin = 9;
 const int greenLedPin = 10;
 const int blueLedPin = 11;
 
+const int fadeSeconds = 3;
+const int fadeSteps = 30;
+
 void setup()
 {
   // initialize the serial communication:
@@ -42,24 +45,24 @@ void loop() {
      greenDelta = buffer[1] - green;
      blueDelta = buffer[2] - blue;
      
-     redIncrement = redDelta / 10;
-     greenIncrement = greenDelta / 10;
-     blueIncrement = blueDelta / 10;
+     redIncrement = float(redDelta) / fadeSteps;
+     greenIncrement = float(greenDelta) / fadeSteps;
+     blueIncrement = float(blueDelta) / fadeSteps;
      
      redPartial = red;
      greenPartial = green;
      bluePartial = blue;
 
-     for (int x = 0; x < 10; x++) {
+     for (int x = 0; x < fadeSteps; x++) {
        redPartial += redIncrement;
        greenPartial += greenIncrement;
        bluePartial += blueIncrement;
 
-       analogWrite(redLedPin, rnd(redPartial));
-       analogWrite(greenLedPin, rnd(greenPartial));
-       analogWrite(blueLedPin, rnd(bluePartial));
+       analogWrite(redLedPin, redPartial);
+       analogWrite(greenLedPin, greenPartial);
+       analogWrite(blueLedPin, bluePartial);
       
-       delay(100);
+       delay((fadeSeconds * 1000) / fadeSteps);
      }    
      
      red = buffer[0];
@@ -71,15 +74,3 @@ void loop() {
      analogWrite(blueLedPin, blue);
   }  
 }
-
-int rnd(float value){
-  int returnValue;
-  
-  if (value > 0.0)
-    returnValue = int(floor(value + 0.5));
-  else
-    returnValue = int(ceil(value - 0.5));
-    
-  return returnValue;
-}
-
